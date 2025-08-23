@@ -1,10 +1,14 @@
+
+// Import the Notification model for creating notification records
 import Notification from "../models/Notification.js";
 
-// persist + emit
+
+// Function to persist a notification and emit it via socket.io
 export async function notify(io, userId, type, data) {
+  // Create a new notification in the database
   const notif = await Notification.create({ user: userId, type, data });
 
-  // emit directly to user's socket room
+  // Emit the notification directly to the user's socket room
   io.to(userId.toString()).emit("notification", {
     id: notif._id,
     type,
@@ -12,5 +16,6 @@ export async function notify(io, userId, type, data) {
     createdAt: notif.createdAt,
   });
 
+  // Return the created notification object
   return notif;
 }
